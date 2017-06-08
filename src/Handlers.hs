@@ -243,7 +243,7 @@ postContatoR = do
                     FormSuccess contato -> do
                        runDB $ insert contato 
                        defaultLayout [whamlet| 
-                           <h1> #{contatoNome contato} sua #{contatoAssunto contato} foi enviado aguarde nossa resposta. 
+                           <h1> #{contatoNome contato} seu(sua) #{contatoAssunto contato} foi enviado aguarde nossa resposta. 
                        |]
                     _ -> redirect ContatoR
                     
