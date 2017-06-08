@@ -29,6 +29,33 @@ Usuario
    email Text
    senha Text
    UniqueEmail email
+   deriving Show
+
+Contato
+    nome Text
+    email Text
+    assunto Text
+    mensagem Textarea
+    deriving Show
+   
+Categoria
+    nome Text
+    deriving Show
+   
+Produto
+    nome Text
+    preco Double
+    catid CategoriaId
+    deriving Show
+    
+Pedido
+    produtoid ProdutoId
+    usuarioid UsuarioId
+    status Int
+    quantidade Int
+    deriving Show
+
+    
 |]
 
 staticFiles "static"
@@ -48,6 +75,17 @@ instance Yesod Sitio where
     authRoute _ = Just $ LoginR
     isAuthorized LoginR _ = return Authorized
     isAuthorized HomeR _ = return Authorized
+    isAuthorized IndexR _ = return Authorized
+    isAuthorized UsuarioR _ = return Authorized
+    isAuthorized PedidoR _ = return Authorized
+    isAuthorized Produtos5R _ = return Authorized
+    isAuthorized ProdutoipadR _ = return Authorized
+    isAuthorized Produtops4R _ = return Authorized
+    isAuthorized ProdutosurfaceR _ = return Authorized
+    isAuthorized ProdutotvR _ = return Authorized
+    isAuthorized ProdutoxboxR _ = return Authorized
+    isAuthorized ContatoR _ = return Authorized
+    isAuthorized (StaticR _) _ = return Authorized
     isAuthorized _ _ = isUser
 
 --isAdmin = do

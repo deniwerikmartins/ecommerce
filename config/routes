@@ -1,10 +1,11 @@
 /cadastro         CadastroR  GET POST
 /listar           ListarR    GET 
+/listarp          ListaPR    GET
 /pessoa/#PessoaId PessoaR    GET POST
 /depto            DeptoR     GET POST
 /static           StaticR    Static getStatic
 
-/                 HomeR      GET
+/home             HomeR      GET
 /teste            TesteR     GET
 /pag1             Pag1R      GET
 /pag2             Pag2R      GET
@@ -15,3 +16,14 @@
 /usuario          UsuarioR   GET POST
 /login            LoginR     GET POST
 /logout           LogoutR    GET
+
+/                 IndexR            GET
+/produtos5        Produtos5R        GET
+/produtoipad      ProdutoipadR      GET
+/produtops4       Produtops4R       GET
+/produtosurface   ProdutosurfaceR   GET
+/produtotv        ProdutotvR        GET
+/produtoxbox      ProdutoxboxR      GET
+/contato          ContatoR          GET POST
+/pedido           PedidoR           GET POST
+/listapedido      ListaPedidoR      GET 
