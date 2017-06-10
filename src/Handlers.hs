@@ -34,6 +34,14 @@ formPedido = renderDivs $ Pedido <$>
               areq (selectField usuarios) "UsuarioNome" Nothing <*>
               areq intField "Status" Nothing <*>
               areq intField "Quantidade" Nothing
+{-              
+formPedidoProduto :: ProdutoId -> Produto -> UsuarioId -> Form Pedido
+formPedidoProduto pid produto uid = renderDivs $ Pedido <$>
+    areq intField "produtoId" (Just (fromIntegral (fromSqlKey pid) ) )<*>
+    pure uid  <*>
+    pure 0 <*>
+    areq intField "quantidade" Nothing
+  -}  
 
 produtos = do
        entidades <- runDB $ selectList [] [Asc ProdutoNome] 
@@ -42,11 +50,9 @@ produtos = do
 usuarios = do
        entidades <- runDB $ selectList [] [Asc UsuarioNome] 
        optionsPairs $ fmap (\ent -> (usuarioNome $ entityVal ent, entityKey ent)) entidades
-       
-
-             
+{-       
 getPedidoR :: Handler Html
-getPedidoR = do
+getPedidoR  = do
             (widget, enctype) <- generateFormPost formPedido
             defaultLayout $ do
             setTitle "Pedido"
@@ -65,13 +71,7 @@ getPedidoR = do
                                 <p ."subtext">Bootstrap Ecommerce Template
                             <div ."col-md-8 col-sm-12">
                                 <form ."form-inline">
-                                    <div ."form-group">
-                                        <label>Email
-                                        <input type="email" ."form-control" placeholder="Enter Email...">
-                                    <div ."form-group">
-                                        <label>Password
-                                        <input type="password" ."form-control" placeholder="Enter Password...">
-                                    <button type="submit" ."btn btn-default">Login
+                                    <a href=@{LoginR} title="" ."btn btn-default">Login
                                     <a href="#" title="" ."btn btn-default">Logout
                     <nav ."navbar navbar-default">
                         <div ."container-fluid">
@@ -90,14 +90,16 @@ getPedidoR = do
                                   <li>
                                     <a href="#">Minha conta
                     <section>
+            
                     <div ."row">
                         <div ."col-md-8">
                             <div ."row">
                                 <div ."col-md-4">
+                                
                                     <img src=@{StaticR img_s5_png} ."main-img">
                                 <div ."col-md-8">
                                     <h2>Samsung Galaxy S5
-                                    <div ."price">R$1.847,00
+                                    <div ."price">
                                     <hr>
                                     <p>Quantity:
                                         <select name="" ."form-control">
@@ -123,6 +125,7 @@ getPedidoR = do
                 
             |]
             
+-}
             --widgetForm PedidoR enctype widget "Pedido"
         
 postPedidoR :: Handler Html
@@ -248,16 +251,19 @@ postContatoR = do
                     _ -> redirect ContatoR
                     
 getListaPR :: Handler Html
-getListaPR = do
+getListaPR = undefined
+{-
+do
             listaP <- runDB $ selectList [] [Asc ProdutoNome]
             defaultLayout $ do 
                 [whamlet|
                     <h1> Produtos cadastradas:
                     <form>
-                        $forall Entity pid produto <- listaP
-                            <input value="#{produtoNome produto}"><input value="#{produtoPreco produto}">
+                        {-$forall Entity pid produto <- listaP
+                            Produto: <input value="#{produtoNome produto}"><br>
+                            Preço<input value="#{produtoPreco produto}"><br>-}
                 |] 
-                
+  -}              
                 
 getListaPedidoR :: Handler Html
 getListaPedidoR  = do
@@ -274,4 +280,33 @@ getListaPedidoR  = do
          |]
 
   
-  
+getPedidoR ::  ProdutoId -> Handler Html
+getPedidoR pid = do
+            produto <- runDB $ get404 pid 
+            categoria <- runDB $ get404 (produtoCatid produto)
+
+            defaultLayout $ do 
+            
+            [whamlet| 
+                <form action=@{PedidoCadastrarR} method=post >
+                    <input type=hidden name=produtoid value=#{show $ fromSqlKey pid}>
+                    <input type=hidden name=usuarioid value=1>
+                    <input type=hidden name=status value=0>
+                    <input type=number name=quantidade value=1>
+                    <input type=submit value="cadastrar pedido">
+               
+            |]
+
+
+postPedidoCadastrarR :: Handler ()
+postPedidoCadastrarR = do
+    pedidoCadastro <- runInputPost $ Pedido 
+                            <$> ( fmap toSqlKey $ (ireq intField "produtoid") )
+                            <*> (fmap toSqlKey $ (ireq intField "usuarioid" ) )
+                            <*> ireq intField "status"
+                            <*> ireq intField  "quantidade"
+    runDB $ insert pedidoCadastro
+    setMessage "PRODUTO INSERIDO COM SUCESSO"
+    redirect IndexR
+    
+   
