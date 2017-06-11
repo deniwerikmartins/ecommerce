@@ -263,7 +263,15 @@ do
                             Produto: <input value="#{produtoNome produto}"><br>
                             Preço<input value="#{produtoPreco produto}"><br>-}
                 |] 
-  -}              
+  -}      
+getSessaoR :: Handler Html
+getSessaoR = do
+    sess <- getSession
+    defaultLayout $ do
+        [whamlet|
+                <h1>#{show sess}
+        |]
+        
                 
 getListaPedidoR :: Handler Html
 getListaPedidoR  = do
@@ -284,16 +292,54 @@ getPedidoR ::  ProdutoId -> Handler Html
 getPedidoR pid = do
             produto <- runDB $ get404 pid 
             categoria <- runDB $ get404 (produtoCatid produto)
-
             defaultLayout $ do 
-            
-            [whamlet| 
-                <form action=@{PedidoCadastrarR} method=post >
-                    <input type=hidden name=produtoid value=#{show $ fromSqlKey pid}>
-                    <input type=hidden name=usuarioid value=1>
-                    <input type=hidden name=status value=0>
-                    <input type=number name=quantidade value=1>
-                    <input type=submit value="cadastrar pedido">
+            setTitle "Produto"
+            addStylesheet $ StaticR css_bootstrap_css
+            addStylesheet $ StaticR css_style_css
+            addScript $ StaticR js_jquery_js
+            addScript $ StaticR js_bootstrap_js
+            [whamlet|
+            <div ."container">
+                    <header #"header">
+                    <div ."row">
+                        <div ."col-md-4 col-sm-12">
+                            <h1 ."logo">
+                                <i ."glyphicon glyphicon-tag">My
+                                <span ."primary">
+                                    Store
+                            <p ."subtext">Bootstrap Ecommerce Template
+                        <div ."col-md-8 col-sm-12">
+                <nav ."navbar navbar-default">
+                    <div ."container-fluid">
+                        <div ."navbar-header">
+                            <button type="button" ."navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                <span ."sr-only">Toggle navigation
+                                <span ."icon-bar">
+                                <span ."icon-bar">
+                                <span ."icon-bar">
+                        <div #"navbar" ."navbar-collapse collapse">
+                            <ul ."nav navbar-nav">
+                              <li ."active">
+                                 <a href=@{IndexR}>Home
+                              <li>
+                                <a href="/contato">Contato
+                <section>
+                <div ."row">
+                    <div ."col-md-8">
+                        <div ."row">
+                            <div ."col-md-8">
+                                <h2>#{produtoNome produto}
+                                <div ."price">R$#{produtoPreco produto}
+                                <hr>
+                                <form action=@{PedidoCadastrarR} method=post >
+                                    <input type=hidden name=produtoid value=#{show $ fromSqlKey pid}>
+                                    <input type=hidden name=usuarioid value=1>
+                                    <input type=hidden name=status value=0>
+                                    <input type=number name=quantidade value=1>
+                                    <input type=submit value="cadastrar pedido">
+            <footer>
+                <p>MyStore Copyright &copy; 2015 <a href="#" title="">Terms &middot; <a href="#" title="">Privacy
+
                
             |]
 
